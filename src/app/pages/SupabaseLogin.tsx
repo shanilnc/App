@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, GraduationCap, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { supabase } from '../../lib/supabaseClient';
 
 type LoginState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -19,48 +20,56 @@ export default function SupabaseLogin() {
     setErrorMessage('');
 
     try {
-      // SUPABASE INTEGRATION POINT
-      // const { data, error } = await supabase.auth.signInWithPassword({
-      //   email: email,
-      //   password: password,
-      // });
+      // SUPABASE INTEGRATION - Sign in with email and password
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
 
-      // if (error) throw error;
+      if (authError) throw authError;
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Fetch user profile to get role
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, full_name')
+        .eq('user_id', authData.user.id)
+        .single();
 
-      // Mock success - In real implementation, get role from profiles table
-      // const { data: profile } = await supabase
-      //   .from('profiles')
-      //   .select('role, full_name')
-      //   .eq('user_id', data.user.id)
-      //   .single();
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        // If profile doesn't exist, create a default one or redirect to setup
+        throw new Error('Profile not found. Please contact support.');
+      }
 
-      const mockRole = localStorage.getItem('userRole') || 'student';
-      const userName = email.split('@')[0];
+      // Store user data
+      const userName = profile.full_name || email.split('@')[0];
       localStorage.setItem('userName', userName);
+      localStorage.setItem('userRole', profile.role);
 
       setLoginState('success');
 
       // Redirect based on role
       setTimeout(() => {
-        if (mockRole === 'student') {
+        if (profile.role === 'student') {
           navigate('/dashboard/student');
-        } else if (mockRole === 'teacher') {
+        } else if (profile.role === 'teacher') {
           navigate('/dashboard/teacher');
-        } else if (mockRole === 'expert') {
+        } else if (profile.role === 'expert') {
           navigate('/dashboard/expert');
         }
       }, 500);
 
     } catch (error: any) {
       setLoginState('error');
+      console.error('Login error:', error);
+      
       // Handle Supabase errors
       if (error.message === 'Invalid login credentials') {
         setErrorMessage('Invalid email or password. Please try again.');
       } else if (error.message === 'Email not confirmed') {
         setErrorMessage('Please verify your email before logging in.');
+      } else if (error.message?.includes('Profile not found')) {
+        setErrorMessage(error.message);
       } else {
         setErrorMessage(error.message || 'An error occurred. Please try again.');
       }
