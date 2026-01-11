@@ -18,12 +18,6 @@ import ExpertDashboard from './pages/ExpertDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 
-// Supabase Authentication Pages
-import SupabaseLogin from './pages/SupabaseLogin';
-import SupabaseSignupQuestionnaire from './pages/SupabaseSignupQuestionnaire';
-import SupabaseSignup from './pages/SupabaseSignup';
-import SignupSuccess from './pages/SignupSuccess';
-
 export default function App() {
   return (
     <ThemeProvider>
@@ -31,12 +25,6 @@ export default function App() {
         <Routes>
           {/* Landing Page */}
           <Route path="/" element={<LandingPage />} />
-          
-          {/* Supabase Authentication Flow (New - Developer-Ready) */}
-          <Route path="/supabase-login" element={<SupabaseLogin />} />
-          <Route path="/supabase-signup-questionnaire" element={<SupabaseSignupQuestionnaire />} />
-          <Route path="/supabase-signup/:role" element={<SupabaseSignup />} />
-          <Route path="/signup-success" element={<SignupSuccess />} />
           
           {/* New Authentication Flow */}
           <Route path="/login" element={<UniversalLogin />} />

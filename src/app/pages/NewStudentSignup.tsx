@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, GraduationCap, ArrowLeft, Check, Loader2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, GraduationCap, ArrowLeft, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { supabase } from '../../lib/supabaseClient';
 
 const SKILL_OPTIONS = [
   'Web Development',
@@ -29,7 +28,6 @@ export default function NewStudentSignup() {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSkillToggle = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -39,65 +37,18 @@ export default function NewStudentSignup() {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
-    try {
-      // Check if Supabase is configured
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      if (!supabaseKey || supabaseKey === 'placeholder-key' || supabaseKey === '') {
-        throw new Error(
-          'Supabase is not configured. Please add your VITE_SUPABASE_ANON_KEY to the .env file. See SUPABASE_SETUP.md for instructions.'
-        );
-      }
-
-      // 1. Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email.trim(),
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName.trim(),
-          },
-        },
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Failed to create user');
-
-      // 2. Create profile in profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user.id,
-          role: 'student',
-          full_name: formData.fullName.trim(),
-          email: formData.email.trim(),
-          institution: formData.institution.trim(),
-          course_year: `${formData.course} - Year ${formData.year}`,
-          skill_interests: selectedSkills.join(', '),
-        });
-
-      if (profileError) throw profileError;
-
-      // 3. Store user info in localStorage
+    // Simulate account creation
+    setTimeout(() => {
       localStorage.setItem('userRole', 'student');
-      localStorage.setItem('userName', formData.fullName.trim());
-      localStorage.setItem('userId', authData.user.id);
-      localStorage.setItem('userEmail', formData.email);
+      localStorage.setItem('userName', formData.fullName);
       localStorage.setItem('userSkills', JSON.stringify(selectedSkills));
-
-      // 4. Navigate to success or dashboard
-      navigate('/signup-success');
-
-    } catch (err: any) {
-      console.error('Signup error:', err);
-      setError(err.message || 'Failed to create account. Please try again.');
-    } finally {
+      navigate('/dashboard/student');
       setLoading(false);
-    }
+    }, 1500);
   };
 
   return (
@@ -304,14 +255,6 @@ export default function NewStudentSignup() {
             >
               {loading ? 'Creating Account...' : 'Create Student Account'}
             </Button>
-
-            {/* Error Message */}
-            {error && (
-              <div className="mt-4 text-sm text-red-500 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5" />
-                {error}
-              </div>
-            )}
           </form>
         </div>
 

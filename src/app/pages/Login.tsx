@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Brain, GraduationCap, BookOpen, Eye, EyeOff, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { Brain, GraduationCap, BookOpen, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { supabase } from '../../lib/supabaseClient';
-import { SupabaseSetupNotice } from '../components/SupabaseSetupNotice';
 
 type Role = 'expert' | 'teacher' | 'student';
 
@@ -17,8 +15,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const roles = [
     {
@@ -41,61 +37,20 @@ export default function Login() {
     },
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      // Check if Supabase is configured
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      if (!supabaseKey || supabaseKey === 'placeholder-key' || supabaseKey === '') {
-        throw new Error(
-          'Supabase is not configured. Please add your VITE_SUPABASE_ANON_KEY to the .env file. See SUPABASE_SETUP.md for instructions.'
-        );
-      }
-
-      // 1. Sign in with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
-      });
-
-      if (authError) {
-        throw new Error(authError.message);
-      }
-
-      if (!authData.user) {
-        throw new Error('No user data returned');
-      }
-
-      // 2. Fetch user profile from profiles table
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', authData.user.id)
-        .single();
-
-      if (profileError) {
-        console.error('Profile fetch error:', profileError);
-        throw new Error('Profile not found. Please contact support.');
-      }
-
-      // 3. Store user info in localStorage
-      localStorage.setItem('userName', profileData.full_name || email.split('@')[0]);
-      localStorage.setItem('userRole', profileData.role);
-      localStorage.setItem('userId', authData.user.id);
-      localStorage.setItem('userEmail', email);
-
-      // 4. Navigate to dashboard based on profile role (not selected role)
-      navigate(`/dashboard/${profileData.role}`);
-
-    } catch (err: any) {
-      console.error('Login error:', err);
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
-    }
+    // For demo purposes, extract name from email (before @)
+    // In production, this would come from authentication response
+    const userName = email.split('@')[0].replace(/[._-]/g, ' ');
+    const capitalizedName = userName.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+    
+    // Save user's name to localStorage
+    localStorage.setItem('userName', capitalizedName || 'User');
+    
+    // Navigate to appropriate dashboard based on selected role
+    navigate(`/dashboard/${selectedRole}`);
   };
 
   const getDecoColors = () => {
@@ -113,9 +68,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#F6F4F1] dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-300" style={{ fontFamily: 'var(--font-sans)' }}>
-      {/* Supabase Setup Notice */}
-      <SupabaseSetupNotice />
-      
       {/* Background Texture */}
       <div className="fixed inset-0 opacity-[0.04] dark:opacity-[0.04] pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptMCAyYy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTQtMS43OS00LTQtNHoiIGZpbGw9IiMwMDAiLz48L2c+PC9zdmc+')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnptMCAyYy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTQtMS43OS00LTQtNHoiIGZpbGw9IiM0Nzc3OUIiLz48L2c+PC9zdmc+')]" />
       
@@ -230,7 +182,7 @@ export default function Login() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] dark:from-[#60A5FA] dark:to-[#3B82F6] hover:from-[#FF5252] hover:to-[#FF7A3D] dark:hover:from-[#3B82F6] dark:hover:to-[#2563EB] text-white rounded-full h-14 text-lg mt-8 shadow-lg transition-all duration-300"
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Log In'}
+                Log In
               </Button>
             </form>
 
@@ -243,14 +195,6 @@ export default function Login() {
                 </Link>
               </span>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="mt-4 text-center text-sm text-red-500 dark:text-red-400">
-                <AlertCircle className="w-5 h-5 inline-block mr-2" />
-                {error}
-              </div>
-            )}
           </div>
         </Card>
       </div>

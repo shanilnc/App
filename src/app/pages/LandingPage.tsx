@@ -339,45 +339,6 @@ export default function LandingPage() {
       {/* Minimal Footer */}
       <footer className="border-t border-[#E5E1DC] dark:border-[#1F2937] py-12 px-6 lg:px-8 bg-[#F6F4F1] dark:bg-[#0F172A] transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
-          {/* Developer Quick Access - Supabase Auth */}
-          <div className="mb-12 p-6 bg-gray-900 rounded-2xl border-2 border-gray-700">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs font-bold">🔵</span>
-              </div>
-              <h3 className="text-white font-semibold">Developer Access: Supabase Authentication</h3>
-            </div>
-            <p className="text-sm text-gray-400 mb-4">
-              Access the complete Supabase-ready authentication flow with developer annotations and data mapping.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <Button
-                onClick={() => navigate('/supabase-login')}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm h-10 rounded-lg"
-              >
-                📝 Login
-              </Button>
-              <Button
-                onClick={() => navigate('/supabase-signup-questionnaire')}
-                className="bg-purple-600 hover:bg-purple-700 text-white text-sm h-10 rounded-lg"
-              >
-                🎯 Signup Flow
-              </Button>
-              <Button
-                onClick={() => navigate('/supabase-signup/student')}
-                className="bg-green-600 hover:bg-green-700 text-white text-sm h-10 rounded-lg"
-              >
-                👨‍🎓 Student Signup
-              </Button>
-              <Button
-                onClick={() => window.open('/SUPABASE_AUTH_GUIDE.md', '_blank')}
-                className="bg-orange-600 hover:bg-orange-700 text-white text-sm h-10 rounded-lg"
-              >
-                📚 Documentation
-              </Button>
-            </div>
-          </div>
-
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] dark:from-[#60A5FA] dark:to-[#3B82F6] rounded-lg flex items-center justify-center shadow-lg transition-all duration-300">
