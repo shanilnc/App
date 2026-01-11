@@ -37,6 +37,8 @@ export default function StudentSignup() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save user's name to localStorage
+    localStorage.setItem('userName', formData.fullName);
     navigate('/dashboard/student');
   };
 

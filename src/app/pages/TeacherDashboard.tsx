@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GraduationCap, BookOpen, Award, Users, Star, LogOut, TrendingUp } from 'lucide-react';
 import { Card } from '../components/ui/card';
@@ -8,12 +8,21 @@ import { Badge } from '../components/ui/badge';
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('Teacher');
+
+  useEffect(() => {
+    // Get user's name from localStorage
+    const storedName = localStorage.getItem('userName');
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
 
   const stats = [
-    { label: 'Masterclasses Enrolled', value: '8', icon: BookOpen, color: 'text-blue-400' },
-    { label: 'Workshops Conducted', value: '24', icon: Users, color: 'text-blue-400' },
-    { label: 'Avg Student Rating', value: '4.6', icon: Star, color: 'text-yellow-400' },
-    { label: 'Certificates Earned', value: '5', icon: Award, color: 'text-blue-400' },
+    { label: 'Masterclasses Enrolled', value: '8', icon: BookOpen, color: 'text-[#FF6B6B]' },
+    { label: 'Workshops Conducted', value: '24', icon: Users, color: 'text-[#9F7AEA]' },
+    { label: 'Avg Student Rating', value: '4.6', icon: Star, color: 'text-[#FFA07A]' },
+    { label: 'Certificates Earned', value: '5', icon: Award, color: 'text-[#48BB78]' },
   ];
 
   const enrolledCourses = [
@@ -35,23 +44,23 @@ export default function TeacherDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-800 to-blue-700">
+    <div className="min-h-screen bg-[#FFF8F3]" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
-      <div className="border-b border-blue-700/50 bg-blue-900/30 backdrop-blur-sm">
+      <div className="border-b-2 border-[#FFE8D6] bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] rounded-xl flex items-center justify-center shadow-lg">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl text-white">Teacher Dashboard</h1>
-                <p className="text-sm text-gray-300">Welcome back, Prof. Rajesh Kumar</p>
+                <h1 className="text-2xl text-[#2D3748]" style={{ fontFamily: 'var(--font-display)' }}>Teacher Dashboard</h1>
+                <p className="text-sm text-[#718096]">Welcome back, {userName}</p>
               </div>
             </div>
             <Button
               variant="ghost"
-              className="text-white hover:bg-white/10"
+              className="text-[#4A5568] hover:bg-[#FFE8D6] rounded-full"
               onClick={() => navigate('/')}
             >
               <LogOut className="w-4 h-4 mr-2" />
@@ -67,13 +76,13 @@ export default function TeacherDashboard() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index} className="bg-white/10 backdrop-blur-md border-blue-700">
+              <Card key={index} className="bg-white border-2 border-[#FFE8D6] shadow-sm hover:shadow-lg transition-shadow rounded-2xl">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <Icon className={`w-8 h-8 ${stat.color}`} />
-                    <span className="text-3xl text-white">{stat.value}</span>
+                    <span className="text-3xl text-[#2D3748]" style={{ fontFamily: 'var(--font-display)' }}>{stat.value}</span>
                   </div>
-                  <p className="text-sm text-gray-300">{stat.label}</p>
+                  <p className="text-sm text-[#4A5568]">{stat.label}</p>
                 </div>
               </Card>
             );
@@ -85,26 +94,26 @@ export default function TeacherDashboard() {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Enrolled Masterclasses */}
-            <Card className="bg-white/10 backdrop-blur-md border-blue-700">
+            <Card className="bg-white border-2 border-[#FFE8D6] shadow-sm rounded-2xl">
               <div className="p-6">
-                <h2 className="text-2xl text-white mb-6">Enrolled Expert Masterclasses</h2>
+                <h2 className="text-2xl text-[#2D3748] mb-6" style={{ fontFamily: 'var(--font-display)' }}>Enrolled Expert Masterclasses</h2>
                 <div className="space-y-4">
                   {enrolledCourses.map((course, index) => (
                     <div
                       key={index}
-                      className="bg-white/5 border border-blue-600/30 rounded-lg p-4 hover:bg-white/10 transition-colors"
+                      className="bg-[#FFF8F3] border-2 border-[#FFE8D6] rounded-xl p-4 hover:border-[#FF8E53] transition-colors"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="text-lg text-white mb-1">{course.title}</h3>
-                          <p className="text-sm text-gray-400">by {course.expert}</p>
+                          <h3 className="text-lg text-[#2D3748] mb-1" style={{ fontFamily: 'var(--font-display)' }}>{course.title}</h3>
+                          <p className="text-sm text-[#718096]">by {course.expert}</p>
                         </div>
                         <Badge
                           variant={course.status === 'Completed' ? 'default' : 'outline'}
                           className={
                             course.status === 'Completed'
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500'
-                              : 'bg-blue-500/20 text-blue-300 border-blue-500'
+                              ? 'bg-gradient-to-r from-[#48BB78] to-[#38A169] text-white border-0'
+                              : 'bg-gradient-to-r from-[#FF6B6B]/10 to-[#FF8E53]/10 text-[#FF6B6B] border-[#FF8E53]'
                           }
                         >
                           {course.status}
@@ -112,32 +121,32 @@ export default function TeacherDashboard() {
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-400">Progress</span>
-                          <span className="text-white">{course.progress}%</span>
+                          <span className="text-[#718096]">Progress</span>
+                          <span className="text-[#2D3748] font-medium">{course.progress}%</span>
                         </div>
-                        <Progress value={course.progress} className="h-2" />
+                        <Progress value={course.progress} className="h-2 bg-[#FFE8D6]" />
                       </div>
                     </div>
                   ))}
                 </div>
-                <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="w-full mt-4 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] hover:from-[#FF5252] hover:to-[#FF7A3D] text-white rounded-full shadow-lg">
                   Browse More Masterclasses
                 </Button>
               </div>
             </Card>
 
             {/* Upcoming Workshops */}
-            <Card className="bg-white/10 backdrop-blur-md border-blue-700">
+            <Card className="bg-white border-2 border-[#FFE8D6] shadow-sm rounded-2xl">
               <div className="p-6">
-                <h2 className="text-2xl text-white mb-6">My Upcoming Workshops</h2>
+                <h2 className="text-2xl text-[#2D3748] mb-6" style={{ fontFamily: 'var(--font-display)' }}>My Upcoming Workshops</h2>
                 <div className="space-y-4">
                   {upcomingWorkshops.map((workshop, index) => (
                     <div
                       key={index}
-                      className="bg-white/5 border border-blue-600/30 rounded-lg p-4 hover:bg-white/10 transition-colors"
+                      className="bg-[#FFF8F3] border-2 border-[#FFE8D6] rounded-xl p-4 hover:border-[#FF8E53] transition-colors"
                     >
-                      <h3 className="text-lg text-white mb-2">{workshop.title}</h3>
-                      <div className="flex items-center justify-between text-sm text-gray-400">
+                      <h3 className="text-lg text-[#2D3748] mb-2" style={{ fontFamily: 'var(--font-display)' }}>{workshop.title}</h3>
+                      <div className="flex items-center justify-between text-sm text-[#718096]">
                         <span>{workshop.date}</span>
                         <div className="flex items-center space-x-3">
                           <span className="flex items-center">
@@ -145,7 +154,7 @@ export default function TeacherDashboard() {
                             {workshop.students} students
                           </span>
                           <span className="flex items-center">
-                            <Star className="w-4 h-4 mr-1 text-yellow-400" />
+                            <Star className="w-4 h-4 mr-1 text-[#FFA07A] fill-[#FFA07A]" />
                             {workshop.rating}
                           </span>
                         </div>
@@ -160,10 +169,10 @@ export default function TeacherDashboard() {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Skill Progress */}
-            <Card className="bg-white/10 backdrop-blur-md border-blue-700">
+            <Card className="bg-white border-2 border-[#FFE8D6] shadow-sm rounded-2xl">
               <div className="p-6">
-                <h2 className="text-xl text-white mb-4 flex items-center">
-                  <TrendingUp className="w-5 h-5 mr-2" />
+                <h2 className="text-xl text-[#2D3748] mb-4 flex items-center" style={{ fontFamily: 'var(--font-display)' }}>
+                  <TrendingUp className="w-5 h-5 mr-2 text-[#FF6B6B]" />
                   Skill Progress
                 </h2>
                 <div className="space-y-4">
@@ -174,10 +183,10 @@ export default function TeacherDashboard() {
                   ].map((item, index) => (
                     <div key={index}>
                       <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-white">{item.skill}</span>
-                        <span className="text-gray-400">{item.level}%</span>
+                        <span className="text-[#2D3748]">{item.skill}</span>
+                        <span className="text-[#718096]">{item.level}%</span>
                       </div>
-                      <Progress value={item.level} className="h-2" />
+                      <Progress value={item.level} className="h-2 bg-[#FFE8D6]" />
                     </div>
                   ))}
                 </div>
@@ -185,21 +194,21 @@ export default function TeacherDashboard() {
             </Card>
 
             {/* Student Feedback */}
-            <Card className="bg-white/10 backdrop-blur-md border-blue-700">
+            <Card className="bg-white border-2 border-[#FFE8D6] shadow-sm rounded-2xl">
               <div className="p-6">
-                <h2 className="text-xl text-white mb-4">Student Feedback</h2>
+                <h2 className="text-xl text-[#2D3748] mb-4" style={{ fontFamily: 'var(--font-display)' }}>Student Feedback</h2>
                 <div className="space-y-4">
                   {studentFeedback.map((feedback, index) => (
-                    <div key={index} className="bg-white/5 border border-blue-600/30 rounded-lg p-3">
+                    <div key={index} className="bg-[#FFF8F3] border-2 border-[#FFE8D6] rounded-xl p-3">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-white">{feedback.student}</span>
+                        <span className="text-sm text-[#2D3748] font-medium">{feedback.student}</span>
                         <div className="flex items-center">
                           {Array.from({ length: feedback.rating }).map((_, i) => (
-                            <Star key={i} className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                            <Star key={i} className="w-3 h-3 text-[#FFA07A] fill-[#FFA07A]" />
                           ))}
                         </div>
                       </div>
-                      <p className="text-sm text-gray-300">{feedback.comment}</p>
+                      <p className="text-sm text-[#4A5568]">{feedback.comment}</p>
                     </div>
                   ))}
                 </div>
@@ -207,9 +216,9 @@ export default function TeacherDashboard() {
             </Card>
 
             {/* Certificates */}
-            <Card className="bg-white/10 backdrop-blur-md border-blue-700">
+            <Card className="bg-white border-2 border-[#FFE8D6] shadow-sm rounded-2xl">
               <div className="p-6">
-                <h2 className="text-xl text-white mb-4">Certificates & Achievements</h2>
+                <h2 className="text-xl text-[#2D3748] mb-4" style={{ fontFamily: 'var(--font-display)' }}>Certificates & Achievements</h2>
                 <div className="space-y-3">
                   {[
                     'Teaching Excellence 2025',
@@ -218,10 +227,10 @@ export default function TeacherDashboard() {
                   ].map((cert, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-3 bg-white/5 border border-blue-600/30 rounded-lg p-3"
+                      className="flex items-center space-x-3 bg-gradient-to-r from-[#FFA07A]/10 to-[#FFD4BF]/10 border-2 border-[#FFE8D6] rounded-xl p-3"
                     >
-                      <Award className="w-5 h-5 text-yellow-400" />
-                      <span className="text-sm text-white">{cert}</span>
+                      <Award className="w-5 h-5 text-[#FFA07A]" />
+                      <span className="text-sm text-[#2D3748]">{cert}</span>
                     </div>
                   ))}
                 </div>
